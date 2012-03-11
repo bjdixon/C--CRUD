@@ -59,29 +59,13 @@ public class CRUD {
     public SqlDataReader read(string tableName) {
         SqlDataReader CRUDreader = null;
         string query = "SELECT * FROM " + tableName;
-        try {
-            this.CRUDconnection.Open();
-            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            CRUDreader = this.CRUDcommand.ExecuteReader();
-            this.CRUDconnection.Close();
-        } catch (Exception e) {
-            //Console.WriteLine(e.ToString());
-        }
-        return CRUDreader;
+        return executeReader(query, CRUDreader);
     }
     //2.
     public SqlDataReader read(string tableName, string columnName) {
         SqlDataReader CRUDreader = null;
         string query = "SELECT " + columnName + " FROM " + tableName;
-        try {
-            this.CRUDconnection.Open();
-            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            CRUDreader = this.CRUDcommand.ExecuteReader();
-            this.CRUDconnection.Close();
-        } catch (Exception e) {
-            //Console.WriteLine(e.ToString());
-        }
-        return CRUDreader;
+        return executeReader(query, CRUDreader);
     }
     //3.
     public SqlDataReader read(string tableName, string[] columnNames) {
@@ -93,15 +77,7 @@ public class CRUD {
         }
         query += columnsString.Substring(0, columnsString.Length - 1);
         query += " FROM " + tableName;
-        try {
-            this.CRUDconnection.Open();
-            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            CRUDreader = this.CRUDcommand.ExecuteReader();
-            this.CRUDconnection.Close();
-        } catch (Exception e) {
-            //Console.WriteLine(e.ToString());
-        }
-        return CRUDreader;
+        return executeReader(query, CRUDreader);
     }
     //4.
     public SqlDataReader read(string tableName, string columnName, string condition) {
@@ -109,15 +85,7 @@ public class CRUD {
         string query = "SELECT ";
         query += columnName " FROM ";
         query += tableName + " WHERE " + condition;
-        try {
-            this.CRUDconnection.Open();
-            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            CRUDreader = this.CRUDcommand.ExecuteReader();
-            this.CRUDconnection.Close();
-        } catch (Exception e) {
-            //Console.WriteLine(e.ToString());
-        }
-        return CRUDreader;
+        return executeReader(query, CRUDreader);
     }
     //5.
     public SqlDataReader read(string tableName, string[] columnNames, string condition) {
@@ -130,15 +98,7 @@ public class CRUD {
         query += columnsString.Substring(0, columnsString.Length - 1);
         query += " FROM ";
         query += tableName + " WHERE " + condition;
-        try {
-            this.CRUDconnection.Open();
-            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            CRUDreader = this.CRUDcommand.ExecuteReader();
-            this.CRUDconnection.Close();
-        } catch (Exception e) {
-            //Console.WriteLine(e.ToString());
-        }
-        return CRUDreader;
+        return executeReader(query, CRUDreader);
     }
 
     public update() {
@@ -156,5 +116,17 @@ public class CRUD {
             //Console.WriteLine(e.ToString());
         }
         return true;
+    }
+    
+    protected SqlDataReader executeRead(string query, SqlDataReader CRUDreader) {
+        try {
+            this.CRUDconnection.Open();
+            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
+            CRUDreader = this.CRUDcommand.ExecuteReader();
+            this.CRUDconnection.Close();
+        } catch (Exception e) {
+            //Console.WriteLine(e.ToString());
+        }
+        return CRUDreader;
     }
 }
