@@ -11,7 +11,7 @@ public class CRUD {
 
     public CRUD() {
         // database connection
-        SqlConnection this.CRUDconnection = new SqlConnection("user id=umbracouser; password=PurellSanitizer#58501; Data Source=CLARISRV; database=IACDB;");
+        SqlConnection this.CRUDconnection = new SqlConnection("user id=USERNAME; password=PASSWORD; Data Source=SERVERNAME; database=DBNAME;");
     }
 
     public CRUD(string connectionString) {
