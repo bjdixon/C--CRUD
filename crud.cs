@@ -11,12 +11,12 @@ public class CRUD {
 
     public CRUD() {
         // database connection
-        SqlConnection CRUDconnection = new SqlConnection("user id=umbracouser; password=PurellSanitizer#58501; Data Source=CLARISRV; database=IACDB;");
+        CRUDconnection = new SqlConnection("user id=umbracouser; password=PurellSanitizer#58501; Data Source=CLARISRV; database=IACDB;");
     }
 
     public CRUD(string connectionString) {
         // database connection
-        SqlConnection CRUDconnection = new SqlConnection(connectionString);
+        CRUDconnection = new SqlConnection(connectionString);
     }
 
     public bool create(string tableName, string[] columnNames, string[] insertValues) {
@@ -38,10 +38,10 @@ public class CRUD {
         query += valuesString.Substring(0, valuesString.Length - 1) + ")";
         //open the connection
         try {
-            this.CRUDconnection.Open();
+            CRUDconnection.Open();
             SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
             CRUDcommand.ExecuteNonQuery();
-            this.CRUDconnection.Close();
+            CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
         }
@@ -108,10 +108,10 @@ public class CRUD {
     public bool delete(string tableName, string condition) {
         string query = "DELETE FROM" + tableName + " WHERE " + condition;
         try {
-            this.CRUDconnection.Open();
+            CRUDconnection.Open();
             SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
             CRUDcommand.ExecuteNonQuery();
-            this.CRUDconnection.Close();
+            CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
         }
@@ -120,10 +120,10 @@ public class CRUD {
     
     protected SqlDataReader executeRead(string query, SqlDataReader CRUDreader) {
         try {
-            this.CRUDconnection.Open();
+            CRUDconnection.Open();
             SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
             CRUDreader = CRUDcommand.ExecuteReader();
-            this.CRUDconnection.Close();
+            CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
         }
