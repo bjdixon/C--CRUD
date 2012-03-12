@@ -11,7 +11,7 @@ public class CRUD {
 
     public CRUD() {
         // database connection
-        CRUDconnection = new SqlConnection("user id=USER; password=PASSWORD; Data Source=SERVER; database=DBNAME;");
+        CRUDconnection = new SqlConnection("user id=umbracouser; password=PurellSanitizer#58501; Data Source=CLARISRV; database=IACDB;");
     }
 
     public CRUD(string connectionString) {
@@ -19,6 +19,7 @@ public class CRUD {
         CRUDconnection = new SqlConnection(connectionString);
     }
 
+    //CHANGE TO USING PARAMETERS
     public bool create(string tableName, string[] columnNames, string[] insertValues) {
         string columnsString = " (";
         string valuesString = " Values (";
@@ -31,19 +32,26 @@ public class CRUD {
         //build the query
         for (int i = 0; i < columnNames.Length; i++) {
             columnsString += columnNames[i] + ", ";
-            valuesString += insertValues[i] + ", ";
+            valuesString += "@" + columnNames[i] + ", ";
         }
         //remove trailing commars
-        query += columnsString.Substring(0, columnsString.Length - 1) + ") ";
-        query += valuesString.Substring(0, valuesString.Length - 1) + ")";
+        query += columnsString.Substring(0, columnsString.Length - 2) + ") ";
+        query += valuesString.Substring(0, valuesString.Length - 2) + ") ";
         //open the connection
         try {
             CRUDconnection.Open();
-            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
+            SqlCommand CRUDcommand = new SqlCommand(query, CRUDconnection);
+            for (int i = 0; i < columnNames.Length; i++) {
+                CRUDcommand.Parameters.Add(new SqlParameter("@" + columnNames[i], insertValues[i]));
+            }
             CRUDcommand.ExecuteNonQuery();
             CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
+            HttpContext c = HttpContext.Current;
+            c.Response.Write(query);
+            c.Response.Write("<br>");
+            c.Response.Write(e.ToString());
         }
         return true;
     }
