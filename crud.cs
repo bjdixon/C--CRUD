@@ -19,7 +19,6 @@ public class CRUD {
         CRUDconnection = new SqlConnection(connectionString);
     }
 
-    //CHANGE TO USING PARAMETERS
     public bool create(string tableName, string[] columnNames, string[] insertValues) {
         string columnsString = " (";
         string valuesString = " Values (";
