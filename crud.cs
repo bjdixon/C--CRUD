@@ -7,16 +7,16 @@ using System.Data.Common;
 using System.Data.SqlClient;
 
 public class CRUD {
-    private sqlConnection CRUDconnection;
+    private SqlConnection CRUDconnection;
 
     public CRUD() {
         // database connection
-        SqlConnection this.CRUDconnection = new SqlConnection("user id=USERNAME; password=PASSWORD; Data Source=SERVERNAME; database=DBNAME;");
+        SqlConnection CRUDconnection = new SqlConnection("user id=umbracouser; password=PurellSanitizer#58501; Data Source=CLARISRV; database=IACDB;");
     }
 
     public CRUD(string connectionString) {
         // database connection
-        SqlConnection this.CRUDconnection = new SqlConnection(connectionString);
+        SqlConnection CRUDconnection = new SqlConnection(connectionString);
     }
 
     public bool create(string tableName, string[] columnNames, string[] insertValues) {
@@ -33,14 +33,14 @@ public class CRUD {
             columnsString += columnNames[i] + ", ";
             valuesString += insertValues[i] + ", ";
         }
-        //remove trailing commars 
+        //remove trailing commars
         query += columnsString.Substring(0, columnsString.Length - 1) + ") ";
         query += valuesString.Substring(0, valuesString.Length - 1) + ")";
-        //open the connection 
+        //open the connection
         try {
             this.CRUDconnection.Open();
             SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            this.CRUDconnection.ExecuteNonQuery();
+            CRUDcommand.ExecuteNonQuery();
             this.CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
@@ -48,7 +48,7 @@ public class CRUD {
         return true;
     }
 
-    // read operations. 
+    // read operations.
     // 1. select *
     // 2. select specified column
     // 3. select specified columns
@@ -59,13 +59,13 @@ public class CRUD {
     public SqlDataReader read(string tableName) {
         SqlDataReader CRUDreader = null;
         string query = "SELECT * FROM " + tableName;
-        return executeReader(query, CRUDreader);
+        return executeRead(query, CRUDreader);
     }
     //2.
     public SqlDataReader read(string tableName, string columnName) {
         SqlDataReader CRUDreader = null;
         string query = "SELECT " + columnName + " FROM " + tableName;
-        return executeReader(query, CRUDreader);
+        return executeRead(query, CRUDreader);
     }
     //3.
     public SqlDataReader read(string tableName, string[] columnNames) {
@@ -77,15 +77,15 @@ public class CRUD {
         }
         query += columnsString.Substring(0, columnsString.Length - 1);
         query += " FROM " + tableName;
-        return executeReader(query, CRUDreader);
+        return executeRead(query, CRUDreader);
     }
     //4.
     public SqlDataReader read(string tableName, string columnName, string condition) {
         SqlDataReader CRUDreader = null;
         string query = "SELECT ";
-        query += columnName " FROM ";
+        query += columnName + " FROM ";
         query += tableName + " WHERE " + condition;
-        return executeReader(query, CRUDreader);
+        return executeRead(query, CRUDreader);
     }
     //5.
     public SqlDataReader read(string tableName, string[] columnNames, string condition) {
@@ -98,11 +98,11 @@ public class CRUD {
         query += columnsString.Substring(0, columnsString.Length - 1);
         query += " FROM ";
         query += tableName + " WHERE " + condition;
-        return executeReader(query, CRUDreader);
+        return executeRead(query, CRUDreader);
     }
 
-    public update() {
-        
+    public bool update() {
+        return true;
     }
 
     public bool delete(string tableName, string condition) {
@@ -110,7 +110,7 @@ public class CRUD {
         try {
             this.CRUDconnection.Open();
             SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            this.CRUDconnection.ExecuteNonQuery();
+            CRUDcommand.ExecuteNonQuery();
             this.CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
@@ -122,7 +122,7 @@ public class CRUD {
         try {
             this.CRUDconnection.Open();
             SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            CRUDreader = this.CRUDcommand.ExecuteReader();
+            CRUDreader = CRUDcommand.ExecuteReader();
             this.CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
