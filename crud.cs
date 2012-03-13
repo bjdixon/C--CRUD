@@ -21,7 +21,7 @@ public class CRUD {
 
     public bool create(string tableName, string[] columnNames, string[] insertValues) {
         string columnsString = " (";
-        string valuesString = " Values (";
+        string valuesString = " VALUES (";
         string query = "INSERT INTO " + tableName;
         if (columnNames.Length != insertValues.Length) {
             //check if the amount of columns and amount of values match. If not we'll return false without executing any sql.
@@ -47,10 +47,6 @@ public class CRUD {
             CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
-            HttpContext c = HttpContext.Current;
-            c.Response.Write(query);
-            c.Response.Write("<br>");
-            c.Response.Write(e.ToString());
         }
         return true;
     }
@@ -108,7 +104,34 @@ public class CRUD {
         return executeRead(query, CRUDreader);
     }
 
-    public bool update() {
+    public bool update(string tableName, string[] columnNames, string[] insertValues, string condition) {
+        string columnsString = " SET ";
+        string query = "UPDATE " + tableName;
+        if (columnNames.Length != insertValues.Length) {
+            //check if the amount of columns and amount of values match. If not we'll return false without executing any sql.
+            //Console.WriteLine("Number of Columns and number of Values mismatch.");
+            return false;
+        }
+        //build the query
+        for (int i = 0; i < columnNames.Length; i++) {
+            columnsString += columnNames[i] + "=";
+            columnsString += "@" + columnNames[i] + ", ";
+        }
+        //remove trailing commars
+        query += columnsString.Substring(0, columnsString.Length - 2);
+        query += " WHERE " + condition;
+        //open the connection
+        try {
+            CRUDconnection.Open();
+            SqlCommand CRUDcommand = new SqlCommand(query, CRUDconnection);
+            for (int i = 0; i < columnNames.Length; i++) {
+                CRUDcommand.Parameters.Add(new SqlParameter("@" + columnNames[i], insertValues[i]));
+            }
+            CRUDcommand.ExecuteNonQuery();
+            CRUDconnection.Close();
+        } catch (Exception e) {
+            //Console.WriteLine(e.ToString());
+        }
         return true;
     }
 
