@@ -19,7 +19,7 @@ public class CRUD {
         CRUDconnection = new SqlConnection(connectionString);
     }
 
-    public bool create(string tableName, string[] columnNames, string[] insertValues) {
+    public bool Create(string tableName, string[] columnNames, string[] insertValues) {
         string columnsString = " (";
         string valuesString = " VALUES (";
         string query = "INSERT INTO " + tableName;
@@ -59,20 +59,17 @@ public class CRUD {
     // 5. select specified columns where arg
 
     //1.
-    public SqlDataReader read(string tableName) {
-        SqlDataReader CRUDreader = null;
+    public DataTable Read(string tableName) {
         string query = "SELECT * FROM " + tableName;
-        return executeRead(query, CRUDreader);
+        return executeRead(query);
     }
     //2.
-    public SqlDataReader read(string tableName, string columnName) {
-        SqlDataReader CRUDreader = null;
+    public DataTable Read(string tableName, string columnName) {
         string query = "SELECT " + columnName + " FROM " + tableName;
-        return executeRead(query, CRUDreader);
+        return executeRead(query);
     }
     //3.
-    public SqlDataReader read(string tableName, string[] columnNames) {
-        SqlDataReader CRUDreader = null;
+    public DataTable Read(string tableName, string[] columnNames) {
         string columnsString = "";
         string query = "SELECT ";
         for (int i = 0; i < columnNames.Length; i++) {
@@ -80,19 +77,17 @@ public class CRUD {
         }
         query += columnsString.Substring(0, columnsString.Length - 1);
         query += " FROM " + tableName;
-        return executeRead(query, CRUDreader);
+        return executeRead(query);
     }
     //4.
-    public SqlDataReader read(string tableName, string columnName, string condition) {
-        SqlDataReader CRUDreader = null;
+    public DataTable Read(string tableName, string columnName, string condition) {
         string query = "SELECT ";
         query += columnName + " FROM ";
         query += tableName + " WHERE " + condition;
-        return executeRead(query, CRUDreader);
+        return executeRead(query);
     }
     //5.
-    public SqlDataReader read(string tableName, string[] columnNames, string condition) {
-        SqlDataReader CRUDreader = null;
+    public DataTable Read(string tableName, string[] columnNames, string condition) {
         string columnsString = "";
         string query = "SELECT ";
         for (int i = 0; i < columnNames.Length; i++) {
@@ -101,11 +96,12 @@ public class CRUD {
         query += columnsString.Substring(0, columnsString.Length - 1);
         query += " FROM ";
         query += tableName + " WHERE " + condition;
-        return executeRead(query, CRUDreader);
+        return executeRead(query);
     }
 
-    public bool update(string tableName, string[] columnNames, string[] insertValues, string condition) {
+    public bool Update(string tableName, string[] columnNames, string[] insertValues, string condition) {
         string columnsString = " SET ";
+        //string valuesString = " Values (";
         string query = "UPDATE " + tableName;
         if (columnNames.Length != insertValues.Length) {
             //check if the amount of columns and amount of values match. If not we'll return false without executing any sql.
@@ -120,6 +116,7 @@ public class CRUD {
         //remove trailing commars
         query += columnsString.Substring(0, columnsString.Length - 2);
         query += " WHERE " + condition;
+        //query += valuesString.Substring(0, valuesString.Length - 2) + ") ";
         //open the connection
         try {
             CRUDconnection.Open();
@@ -135,11 +132,11 @@ public class CRUD {
         return true;
     }
 
-    public bool delete(string tableName, string condition) {
+    public bool Delete(string tableName, string condition) {
         string query = "DELETE FROM" + tableName + " WHERE " + condition;
         try {
             CRUDconnection.Open();
-            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
+            SqlCommand CRUDcommand = new SqlCommand(query, CRUDconnection);
             CRUDcommand.ExecuteNonQuery();
             CRUDconnection.Close();
         } catch (Exception e) {
@@ -148,15 +145,17 @@ public class CRUD {
         return true;
     }
     
-    protected SqlDataReader executeRead(string query, SqlDataReader CRUDreader) {
+    protected DataTable executeRead(string query) {
+        SqlDataReader CRUDreader = null;
+        DataTable dt = new DataTable();
         try {
             CRUDconnection.Open();
-            SqlCommand CRUDcommand = new SqlCommand(query, this.CRUDconnection);
-            CRUDreader = CRUDcommand.ExecuteReader();
+            SqlCommand CRUDcommand = new SqlCommand(query, CRUDconnection);
+            dt.Load(CRUDcommand.ExecuteReader());
             CRUDconnection.Close();
         } catch (Exception e) {
             //Console.WriteLine(e.ToString());
         }
-        return CRUDreader;
+        return dt;
     }
 }
