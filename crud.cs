@@ -101,7 +101,6 @@ public class CRUD {
 
     public bool Update(string tableName, string[] columnNames, string[] insertValues, string condition) {
         string columnsString = " SET ";
-        //string valuesString = " Values (";
         string query = "UPDATE " + tableName;
         if (columnNames.Length != insertValues.Length) {
             //check if the amount of columns and amount of values match. If not we'll return false without executing any sql.
@@ -116,7 +115,6 @@ public class CRUD {
         //remove trailing commars
         query += columnsString.Substring(0, columnsString.Length - 2);
         query += " WHERE " + condition;
-        //query += valuesString.Substring(0, valuesString.Length - 2) + ") ";
         //open the connection
         try {
             CRUDconnection.Open();
