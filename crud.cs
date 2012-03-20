@@ -81,13 +81,17 @@ public class CRUD {
                     } 
                     columnsString += columnNames[i] + commar;
                 }
-                query += columnsString.Substring(0, columnsString.Length - 2);
                 query += " FROM " + tableName;
                 return executeRead(query);
             }
             
             // Select specified columns where conditionColumns == conditionValues
             public DataTable Read_Where(string tableName, string[] columnNames, string[] conditionColumns, string[] conditionValues) {
+                if (conditionColumns.Length != conditionValues.Length) {
+                    //check if the amount of columns and amount of values match. If not we'll return null without executing any sql.
+                    //Console.WriteLine("Number of Columns and number of Values mismatch.");
+                    return null;
+                }
                 string columnsString = "";
                 string condition = "";
                 string query = "SELECT ";
@@ -108,6 +112,11 @@ public class CRUD {
             
             // Select * where conditionColumns == conditionValues
             public DataTable Read_Where(string tableName, string[] conditionColumns, string[] conditionValues) {
+                if (conditionColumns.Length != conditionValues.Length) {
+                    //check if the amount of columns and amount of values match. If not we'll return null without executing any sql.
+                    //Console.WriteLine("Number of Columns and number of Values mismatch.");
+                    return null;
+                }
                 string columnsString = "";
                 string condition = "";
                 string query = "SELECT *";
