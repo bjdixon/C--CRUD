@@ -72,14 +72,13 @@ public class CRUD {
             }
             // 3.
             public DataTable Read(string tableName, string[] columnNames) {
-                string columnsString = "";
                 string commar = ", ";
                 string query = "SELECT ";
                 for (int i = 0; i < columnNames.Length; i++) {
                     if (i == columnNames.Length -1) {
                         commar = "";
                     } 
-                    columnsString += columnNames[i] + commar;
+                    query += columnNames[i] + commar;
                 }
                 query += " FROM " + tableName;
                 return executeRead(query);
@@ -92,13 +91,15 @@ public class CRUD {
                     //Console.WriteLine("Number of Columns and number of Values mismatch.");
                     return null;
                 }
-                string columnsString = "";
+                string commar = ", ";
                 string condition = "";
                 string query = "SELECT ";
                 for (int i = 0; i < columnNames.Length; i++) {
-                    columnsString += columnNames[i] + ", ";
+                    if (i == columnNames.Length -1) {
+                        commar = "";
+                    } 
+                    query += columnNames[i] + commar;
                 }
-                query += columnsString.Substring(0, columnsString.Length - 2);
                 query += " FROM " + tableName + " WHERE ";
                 for (int i = 0; i < conditionColumns.Length; i++) {
                     condition += conditionColumns[i] + " = " + "@" + conditionColumns[i];
@@ -132,6 +133,7 @@ public class CRUD {
             }
 
             public bool Update(string tableName, string[] columnNames, string[] insertValues, string condition) {
+                string commar = ", ";
                 string columnsString = " SET ";
                 string query = "UPDATE " + tableName;
                 if (columnNames.Length != insertValues.Length) {
@@ -141,12 +143,13 @@ public class CRUD {
                 }
                 //build the query
                 for (int i = 0; i < columnNames.Length; i++) {
+                    if (i == columnNames.Length -1) {
+                        commar = "";
+                    }
                     columnsString += columnNames[i] + "=";
-                    columnsString += "@" + columnNames[i] + ", ";
+                    columnsString += "@" + columnNames[i] + commar;
                 }
-                //remove trailing commars
-                query += columnsString.Substring(0, columnsString.Length - 2);
-                query += " WHERE " + condition;
+                query += columnsString + " WHERE " + condition;
                 //open the connection
                 try {
                     CRUDconnection.Open();
