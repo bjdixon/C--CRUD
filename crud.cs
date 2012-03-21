@@ -102,7 +102,7 @@ public class CRUD {
                 }
                 query += " FROM " + tableName + " WHERE ";
                 for (int i = 0; i < conditionColumns.Length; i++) {
-                    condition += conditionColumns[i] + " = " + "@" + conditionColumns[i];
+                    condition += conditionColumns[i] + " = " + "@" + conditionColumns[i] + "Check";
                     if (i != conditionColumns.Length -1) {
                         condition += " AND ";
                     }
@@ -123,7 +123,7 @@ public class CRUD {
                 string query = "SELECT *";
                 query += " FROM " + tableName + " WHERE ";
                 for (int i = 0; i < conditionColumns.Length; i++) {
-                    condition += conditionColumns[i] + " = " + "@" + conditionColumns[i];
+                    condition += conditionColumns[i] + " = " + "@" + conditionColumns[i] + "Check";
                     if (i != conditionColumns.Length -1) {
                         condition += " AND ";
                     }
@@ -132,11 +132,12 @@ public class CRUD {
                 return executeRead(query, conditionColumns, conditionValues);
             }
 
-            public bool Update(string tableName, string[] columnNames, string[] insertValues, string condition) {
+            public bool Update(string tableName, string[] columnNames, string[] insertValues, string[] conditionColumns, string[] conditionValues) {
                 string commar = ", ";
+                string condition = "";
                 string columnsString = " SET ";
                 string query = "UPDATE " + tableName;
-                if (columnNames.Length != insertValues.Length) {
+                if (columnNames.Length != insertValues.Length || conditionColumns.Length != conditionValues.Length) {
                     //check if the amount of columns and amount of values match. If not we'll return false without executing any sql.
                     //Console.WriteLine("Number of Columns and number of Values mismatch.");
                     return false;
@@ -149,13 +150,23 @@ public class CRUD {
                     columnsString += columnNames[i] + "=";
                     columnsString += "@" + columnNames[i] + commar;
                 }
-                query += columnsString + " WHERE " + condition;
+                query += columnsString + " WHERE ";
+                for (int i = 0; i < conditionColumns.Length; i++) {
+                    condition += conditionColumns[i] + " = " + "@" + conditionColumns[i] + "Check";
+                    if (i != conditionColumns.Length -1) {
+                        condition += " AND ";
+                    }
+                }
+                query += condition;
                 //open the connection
                 try {
                     CRUDconnection.Open();
                     SqlCommand CRUDcommand = new SqlCommand(query, CRUDconnection);
                     for (int i = 0; i < columnNames.Length; i++) {
                         CRUDcommand.Parameters.Add(new SqlParameter("@" + columnNames[i], insertValues[i]));
+                    }
+                    for (int i = 0; i < conditionColumns.Length; i++) {
+                        CRUDcommand.Parameters.Add(new SqlParameter("@" + conditionColumns[i] + "Check", conditionValues[i]));
                     }
                     CRUDcommand.ExecuteNonQuery();
                     CRUDconnection.Close();
@@ -199,7 +210,7 @@ public class CRUD {
                     CRUDconnection.Open();
                     SqlCommand CRUDcommand = new SqlCommand(query, CRUDconnection);
                     for (int i = 0; i < conditionColumns.Length; i++) {
-                        CRUDcommand.Parameters.Add(new SqlParameter("@" + conditionColumns[i], conditionValues[i]));
+                        CRUDcommand.Parameters.Add(new SqlParameter("@" + conditionColumns[i] + "Check", conditionValues[i]));
                     }
                     dt.Load(CRUDcommand.ExecuteReader());
                     CRUDconnection.Close();
